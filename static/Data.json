@@ -1,0 +1,33 @@
+[{
+    "Node_name": "10.25.33.11",
+    "Date_time": "2021-07-01 12:00:00",
+    "Node_datas": [
+        {
+            "Battery_volt": 12.1,
+            "Panel_volt": 14,
+            "Wifi_signal": -50
+        }
+    ] 
+},
+{
+    "Node_name": "10.25.33.11",
+    "Date_time": "2021-07-03 12:00:00",
+    "Node_datas": [
+        {
+            "Battery_volt": 13.1,
+            "Panel_volt": 19,
+            "Wifi_signal": -70
+        }
+    ] 
+},
+{
+    "Node_name": "10.25.33.201",
+    "Date_time": "2025-01-31 15:25:00",
+    "Node_datas": [
+        {
+            "Battery_volt": 13.1,
+            "Panel_volt": 19,
+            "Wifi_signal": -70
+        }
+    ] 
+}]

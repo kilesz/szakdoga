@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weatherpage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidenav">
+        <a href="main_page">Main Page</a>
+        <a href="datas">Datas</a>
+        <a href="graphs">Graphs</a>
+        <a href="locations">Locations</a>
+    </div>
+    <div id="loader" class="loader"></div>
+    <h1 id="welcome-message" class="welcome-message">Üdvözöljük a Weatherpage oldalon!</h1>
+    <div id="content" class="content-container">
+      <div class="chart-container">
+        <div class="chart-box">
+            <canvas class="box-for-graph" id="batteryVolt"></canvas>
+        </div>
+        <div class="chart-row">
+          <div class="chart-box">
+            <canvas class="box-for-graph" id="panelVolt"></canvas>
+          </div>
+          <div class="chart-box">
+            <canvas class="box-for-graph" id="wifiSignal"></canvas>
+          </div>
+        </div>
+      </div>
+      <div id="ip-listt" class="ip-listt">
+          <h2>IP Addresses</h2>
+          <div class="ips">
+              <ul>
+                  <li onclick="storeIp('10.25.33.11')">10.25.33.11</li>
+                  <li onclick="storeIp('10.25.33.216')">10.25.33.216</li>
+                  <li onclick="storeIp('10.25.33.211')">10.25.33.211</li>
+                  <li onclick="storeIp('10.25.33.201')">10.25.33.201</li>
+                  <li onclick="storeIp('10.25.33.231')">10.25.33.231</li>
+                  <li onclick="storeIp('10.25.33.221')">10.25.33.221</li>
+                  <li onclick="storeIp('10.25.33.206')">10.25.33.206</li>
+                  <li onclick="storeIp('10.25.33.241')">10.25.33.241</li>
+                  <li onclick="storeIp('10.25.33.236')">10.25.33.236</li>
+                  <li onclick="storeIp('10.25.33.251')">10.25.33.251</li>
+              </ul>
+          </div>
+          <button onclick="fileRead(selectedIp)">Update Datas</button>
+      </div> 
+      <div id="list"></div>
+    </div>
+    <div id="background-overlay"></div>
+    
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+        const gbv = document.getElementById('batteryVolt');
+        const gpv = document.getElementById('panelVolt');
+        const gws = document.getElementById('wifiSignal');
+        const content = document.getElementById('content');
+        const overlay = document.getElementById('background-overlay');
+        const ip_listt = document.getElementById('ip-listt');
+        const welcome_message = document.getElementById('welcome-message');
+        const data = [];
+        let selectedIp = '10.25.33.11'; //default ip cím
+        let chartInstance1 = null;
+        let chartInstance2 = null;
+        let chartInstance3 = null;
+
+        //megoldani a töltő képernyőt
+        //kerekítés valamiért nem jó
+        //A legfrissebb adatok kiírása: ha nem az első elem a json-ben a legfrissebb akkor a legutolsó adatot írja ki
+
+        //A legfrissebb adatok kiírása
+        function list(latestData){
+          const list = document.getElementById('list');
+          list.innerHTML = '';
+          const nodeData = latestData.Node_datas[0];
+          const node = latestData.Node_name;
+          const batteryVolt = nodeData.Battery_volt;
+          const panelVolt = nodeData.Panel_volt;
+          const wifiSignal = nodeData.Wifi_signal;
+          const date = latestData.Date_time;
+          const li = document.createElement('li');
+          li.style.color = 'yellow';
+          li.textContent = `${node} - Battery_volt: ${rounding(batteryVolt)}, Panel_volt: ${rounding(panelVolt)}, Wifi_signal: ${rounding(wifiSignal)}, Date: ${date}`;
+          list.appendChild(li); 
+        }
+
+        //Kerekítés
+        function rounding(value) {
+            return Math.round(parseFloat(value) * 100) / 100;
+        }
+
+        //Az ip-re rákattintva megnézi a legfrissebb adatokat és kirajzolja az ip 3 grafikonját
+        async function storeIp(ip) {
+            selectedIp = ip;
+            console.log('Selected IP:', selectedIp);
+            showLoader();
+            const newData = await fileRead(selectedIp);
+            graphDraw(newData);
+            hideLoader();
+        }
+
+        // Ellenőrzi hogy a dátum 10 percen belüli-e
+        function isRecent(dateString) {
+          const dataTime = new Date(dateString);
+          const currentTime = new Date();
+          const diffMinutes = (currentTime - dataTime) / (1000 * 60);
+          return diffMinutes <= 10;
+        }
+
+        // IP-címek színének frissítése
+        function updateIpColors(freshdata) {
+          const ipListItems = document.querySelectorAll('.ips li');
+
+          ipListItems.forEach(li => {
+              const ip = li.innerText;
+              const latestData = freshdata.filter(entry => entry.Node_name === ip)
+                                          .sort((a, b) => new Date(b.Date_time) - new Date(a.Date_time))[0]; 
+
+              if (latestData && isRecent(latestData.Date_time)) {
+                  li.style.color = 'green';
+              } else {
+                  li.style.color = 'white';
+              }
+              });
+        }
+
+        //frissiti a kiválaszott ip adatát, ha nincs kiválasztva akkor a default ip-t adatait frissíti
+        async function fileRead(selectedIp){
+            try   {
+              const response = await fetch('./static/Data.json');     
+              const freshdata = await response.json();
+              console.log("Freshdata:", freshdata);
+
+              updateIpColors(freshdata);
+
+              const filteredData = freshdata.filter(entry => entry.Node_name === selectedIp);
+      
+              console.log("Szűrt adatok:", filteredData);
+
+              list(filteredData[0]);
+
+              return filteredData;
+            } catch (error) {
+                console.error('probléma a fetchel', error);
+                return [];
+            }
+        }
+
+        //kirajzolja a battery_volt, panel_volt, wifi_signal grafikonokat
+        function graphDraw(data){
+
+          if (!data || data.length === 0) {
+            console.error("Nincsenek adatok a grafikonhoz!");
+            return;
+          }
+
+          const batteryVoltData = [];
+          const panelVoltData = [];
+          const wifiSignalData = [];
+          const labels = [];
+
+          data.forEach(entry => {
+            labels.push(entry.Date_time);
+            const nodeData = entry.Node_datas[0];
+
+            batteryVoltData.push(rounding(nodeData.Battery_volt));
+            panelVoltData.push(rounding(nodeData.Panel_volt));
+            wifiSignalData.push(rounding(nodeData.Wifi_signal));
+          });
+
+          console.log("Battery_volt:", batteryVoltData);
+          console.log("Panel_volt:", panelVoltData);
+          console.log("Wifi_signal:", wifiSignalData);
+
+          if (chartInstance1 !== null) {
+            chartInstance1.destroy();
+          }
+          if (chartInstance2 !== null) {
+            chartInstance2.destroy();
+          }
+          if (chartInstance3 !== null) {
+            chartInstance3.destroy();
+          }
+
+          chartInstance1=new Chart(gbv, {
+                type: 'line',
+                data: {
+                  labels: labels,
+                  datasets: [{
+                    label: 'Battery_volt',
+                    data: batteryVoltData,
+                    borderColor: 'blue',
+                    borderWidth: 2
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  scales: {
+                    y: {
+                      min: 11.6,
+                      max: 14
+                    }
+                  }
+                }
+              });
+              chartInstance2=new Chart(gpv, {
+                  type: 'line',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Panel_volt',
+                      data: panelVoltData,
+                      borderColor: 'green',
+                      borderWidth: 2
+                    }]
+                  },
+                  options: {
+                      responsive: true,
+                    scales: {
+                      y: {
+                        min: 0,
+                        max: 25
+                      }
+                    }
+                  }
+                });
+              chartInstance3=new Chart(gws, {
+                  type: 'line',
+                  data: {
+                    labels: labels,
+                    datasets: [{
+                      label: 'Wifi_signal',
+                      data: wifiSignalData,
+                      borderWidth: 2
+                    }]
+                  },
+                  options: {
+                      responsive: true,
+                    scales: {
+                      y: {
+                        min: -100,
+                        max: -20
+                      }
+                    }
+                  }
+                });
+        }
+        
+        //töltő képernyő
+        function showLoader() {
+            loader.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+            overlay.style.display = 'none';
+            content.style.display = 'flex';
+            ip_listt.style.display = 'block';
+            welcome_message.style.display = 'block';
+        }
+        
+        //percenkénti periodikus frissítés
+        function startPeriodicUpdate() {
+            setInterval(async () => {
+                showLoader();
+                const newData = await fileRead(selectedIp);
+                graphDraw(newData);
+                hideLoader();
+            }, 60000); // 60000 ms = 1 perc
+        }
+
+        //kezdetleges oldal indítás default ip címmel
+        async function initialize() {
+            showLoader();
+            const newData = await fileRead(selectedIp);
+            graphDraw(newData);
+            hideLoader();
+            startPeriodicUpdate();    
+        }
+
+        initialize(); 
+      </script>
+</body>
+</html>
