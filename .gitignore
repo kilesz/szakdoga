@@ -1,0 +1,2 @@
+proxy-server/node_modules/.bin/is-docker
+proxy-server/node_modules/.bin/is-inside-container

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weatherpage</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="sidenav">
+        <a href="main_page">Main Page</a>
+        <a href="datas">Datas</a>
+        <a href="graphs">Graphs</a>
+        <a href="locations">Locations</a>
+    </div>
+    <select name="Node" id="Node">
+        <option value="10.25.33.11">10.25.33.11</option>
+        <option value="10.25.33.216">10.25.33.216</option>
+        <option value="10.25.33.211">10.25.33.211</option>
+        <option value="10.25.33.201">10.25.33.201</option>
+        <option value="10.25.33.231">10.25.33.231</option>
+        <option value="10.25.33.221">10.25.33.221</option>
+        <option value="10.25.33.206">10.25.33.206</option>
+        <option value="10.25.33.241">10.25.33.241</option>
+        <option value="10.25.33.236">10.25.33.236</option>
+        <option value="10.25.33.251">10.25.33.251</option>
+    </select>
+    <label for="StartingTimeSelector">Select the start:</label>
+    <input type="datetime-local" id="StartingTimeSelector" name="StartingTimeSelector">
+    <label for="EndingTimeSelector">Select the end:</label>
+    <input type="datetime-local" id="EndingTimeSelector" name="EndingTimeSelector">
+    <button onclick="fileRead(selectedIp)">Adatok lekérése</button>
+    <div>
+        <canvas id="graph"></canvas>
+    </div>
+      
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      
+    <script>
+        const graph = document.getElementById('graph');
+        const selectedip = document.getElementById('Node');
+        const startingtime = document.getElementById('StartingTimeSelector');
+        const endingtime = document.getElementById('EndingTimeSelector');
+        let chartInstance1 = null;
+
+        async function fileRead(selectedIp){
+            try   {
+              const response = await fetch('./static/Data.json');     
+              const freshdata = await response.json();
+              console.log("Freshdata:", freshdata);
+
+              updateIpColors(freshdata);
+
+              const filteredData = freshdata.filter(entry => entry.Node_name === selectedIp);
+      
+              console.log("Szűrt adatok:", filteredData);
+
+              list(filteredData[0]);
+
+              return filteredData;
+            } catch (error) {
+                console.error('probléma a fetchel', error);
+                return [];
+            }
+        }
+
+        function graphDraw() {
+            if (chartInstance1 !== null) {
+                chartInstance1.destroy();
+            }
+
+            new Chart(graph, {
+            type: 'bar',
+            data: {
+                labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                y: {
+                    beginAtZero: true
+                }
+                }
+            }
+            });
+        }
+        async function initialize() {
+            showLoader();
+            const data = {};
+            for (const ip of ipAddresses) {
+                const result = await fetchData('/proxy', { ip });
+                if (result) {
+                    data[ip] = result;
+                }
+            }
+            hideLoader();
+            updateDisplays(data);
+        }
+        initialize(); 
+      </script>
+</body>
+</html>

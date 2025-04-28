@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>weatherpage</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="main-content">
+    <div class="sidenav">
+        <div id="ip-listt" class="ip-listt">
+          <h2>IP Addresses</h2>
+          <div class="ips">
+              <ul>
+                  <li onclick="choosenDescribe('10.25.33.11')">10.25.33.11<br>
+                  <canvas id="C_panel_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.216')">10.25.33.216<br>
+                  <canvas id="C_panel_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.211')">10.25.33.211<br>
+                  <canvas id="C_panel_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.201')">10.25.33.201<br>
+                  <canvas id="C_panel_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.231')">10.25.33.231<br>
+                  <canvas id="C_panel_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.221')">10.25.33.221<br>
+                  <canvas id="C_panel_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.206')">10.25.33.206<br>
+                  <canvas id="C_panel_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.241')">10.25.33.241<br>
+                  <canvas id="C_panel_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.236')">10.25.33.236<br>
+                  <canvas id="C_panel_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+                  <li onclick="choosenDescribe('10.25.33.251')">10.25.33.251<br>
+                  <canvas id="C_panel_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_battery_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+                  <canvas id="C_wifi_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              </ul>
+          </div>
+          <button onclick="fetchAndUpdate()">Update Datas</button>
+      </div>
+    </div>
+    
+    <div id="loader" class="loader"></div>
+    <h1 id="welcome-message" class="welcome-message">Welcome on my Weatherpage!</h1>
+    <div id="content" class="content-container">
+      
+       
+      <div id="list" class="page-section"></div>
+      <button onclick="csvDownload()">Download Data</button>
+
+      <h1>Data Query</h1>
+    
+      <form id="historicalDataForm" class="page-section">
+          <label for="hostid">Host ID:</label>
+          <input type="text" id="hostid" name="hostid" value="10.25.33.11" required>
+          
+          <label for="property">Property:</label>
+          <select id="property" name="property" required>
+              <option value="Start">Start</option>
+              <option value="SYS_Type">SYS_Type</option>
+              <option value="SYS_TimeStamp">SYS_TimeStamp</option>
+              <option value="SYS_Status">SYS_Status</option>
+              <option value="DeviceID">DeviceID</option>
+              <option value="EVState">EVState</option>
+              <option value="ZeroFilter">ZeroFilter</option>
+              <option value="ConcentrationFilter">ConcentrationFilter</option>
+              <option value="Concentration">Concentration</option>
+              <option value="GPS_TimeStamp">GPS_TimeStamp</option>
+              <option value="Latitude">Latitude</option>
+              <option value="Longitude">Longitude</option>
+              <option value="ComWait">ComWait</option>
+              <option value="ComCounter">ComCounter</option>
+              <option value="Barometric_pr">Barometric_pr</option>
+              <option value="Air_temperature">Air_temperature</option>
+              <option value="Relative_humidity">Relative_humidity</option>
+              <option value="Wind_direction">Wind_direction</option>
+              <option value="Wind_speed">Wind_speed</option>
+              <option value="Pressure_pump">Pressure_pump</option>
+              <option value="Battery_Volt">Battery_Volt</option>
+              <option value="Panel_Volt">Panel_Volt</option>
+          </select>
+          
+          <label for="start_datetime">Start time:</label>
+          <input type="datetime-local" id="start_datetime" name="start_datetime" required>
+          
+          <label for="end_datetime">End time:</label>
+          <input type="datetime-local" id="end_datetime" name="end_datetime" required>
+          
+          <button type="submit">Submit</button>
+      </form>
+    
+      <div id="resultDiv"></div>
+      <div class="page-section">
+        <div class="chart-section">
+        <div class="full-width-chart-container">
+        <canvas id="batteryVolt" class="full-width-chart"></canvas>
+        </div>
+        </div>
+      </div>
+      </div>
+
+    </div>
+    <div id="background-overlay"></div>
+  </div>
+    
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script>
+
+        const gbv = document.getElementById('batteryVolt');
+        const content = document.getElementById('content');
+        const overlay = document.getElementById('background-overlay');
+        const ip_listt = document.getElementById('ip-listt');
+        const welcome_message = document.getElementById('welcome-message');
+        const queried_graph = document.getElementById('queried_graph');
+        const starting_time_selector = document.getElementById('StartingTimeSelector');
+        const ending_time_selector = document.getElementById('EndingTimeSelector');
+        const ipListItems = document.querySelectorAll('.ips li');
+        const resultDiv = document.getElementById("resultDiv");
+        const result = document.getElementById("result");
+
+        const data = [];
+        let chartInstance1 = null;
+        let csvSave = 0;
+        let lastDisplayedData = null;
+
+        //megoldani a töltő képernyőt
+
+        //kerekítés
+        function rounding(value){
+          return value ? value / 10 : null;
+        }
+
+        // A freshdata ip cím alapján való adat keresése #pipa pipa
+        function cutter(neededData, freshdata,ip){
+          const nodeEntry = freshdata.find(entry => entry[1] === ip);  
+            if (nodeEntry && nodeEntry[2] && nodeEntry[2].length > 0) {
+              const sensorData = nodeEntry[2];
+              return sensorData.find(item => item[0] === neededData);
+            }
+          return null;
+        }
+
+        //A legfrissebb adatok kiírása #pipa pipa
+        async function choosenDescribe(ip){
+          const list = document.getElementById('list');
+          list.innerHTML = '';
+          const freshdata = await fetchAndUpdate();
+          
+          try {
+            
+            const nodeEntry = freshdata.find(entry => entry[1] === ip);
+            
+            if (!nodeEntry || !nodeEntry[2]) {
+                throw new Error('No data available for selected IP');
+            }
+            
+            const keys = [
+              "Start", "SYS_Type", "SYS_TimeStamp", "SYS_Status", "Device_ID", "EV_State",
+              "ZeroFilter", "ConcentrationFilter", "Concentration", "GPS_TimeStamp",
+              "Latitude", "Longitude", "ComWait", "ComCounter", "Barometric_P",
+              "Air_temperature", "Relative_humidity", "Wind_direction", "Wind_speed",
+              "Pressure_pump", "Battery_Volt", "Panel_Volt"
+            ];
+
+            let text = `IP: ${nodeEntry[1]}, Date: ${nodeEntry[0]}\n`;
+
+            for (const key of keys) {
+              const entry = cutter(key, freshdata, ip);
+              if (entry) {
+                let value = entry[1];
+
+                if (key === "Battery_Volt" || key === "Panel_Volt") {
+                  value = value / 10;
+                }
+
+                text += `${key}: ${value}\n`;
+              } else {
+                text += `${key}: N/A\n`;
+              }
+            }
+            
+            lastDisplayedData = text;
+
+            const li = document.createElement('li');
+            li.style.color = 'yellow';
+            li.textContent = text;
+            list.appendChild(li);
+          } catch (error) {
+              console.error('Error in choosenDescribe:', error);
+              const li = document.createElement('li');
+              li.style.color = 'red';
+              li.textContent = 'Error loading data';
+              list.appendChild(li);
+          }
+        }
+
+        // A legfrissebb adatok lekérdezése #pipa pipa
+        async function fetchAndUpdate() {
+          try   {
+            const response = await fetch('/data');
+
+            if (!response.ok) {
+                throw new Error(`Hálózati hiba: ${response.status}`);
+            }
+
+            const text = await response.text();
+
+            if (!text) {
+                throw new Error("Üres válasz a szervertől!");
+            }
+
+            const jsonData = JSON.parse(text);
+            console.log("JSON adatok:", jsonData);
+
+            if (Array.isArray(jsonData)) {
+              return jsonData;
+            }
+            if (jsonData.data && typeof jsonData.data === 'string') {
+              try {
+                  const freshdata = JSON.parse(jsonData.data);
+                  return freshdata;
+              } catch (e) {
+                  console.error('Hiba a data field parse-olásakor:', e);
+                  return jsonData;
+              }
+            } else {
+              return jsonData;
+            }
+            return(freshdata);
+          } catch (error) {
+            console.error('Hiba a fetchelés közben:', error);
+            document.getElementById('error-display').textContent = `Hiba az adatok frissítésekor: ${error.message}`;
+          }
+        }
+
+        //csv fájl letöltése #pipa pipa
+        function csvDownload() {
+          if (!lastDisplayedData) {
+            alert("Please select an IP first to view data before downloading.");
+            return;
+          }
+        
+          const lines = lastDisplayedData.trim().split('\n');
+          const headers = ['Key', 'Value'];
+        
+          const rows = lines.slice(2).map(line => {
+            const index = line.indexOf(':');
+            return [line.slice(0, index).trim(), line.slice(index + 1).trim()];
+          });
+        
+          const ipLine = lines[0];
+          const dateLine = lines[1];
+          const [ipKey, ipValue] = ipLine.split(/:\s(.+)/);
+          const [dateKey, dateValue] = dateLine.split(/:\s(.+)/);
+          rows.unshift([dateKey, dateValue]);
+          rows.unshift([ipKey, ipValue]);
+        
+          let csvContent = headers.join(',') + '\n';
+          csvContent += rows.map(row => row.join(',')).join('\n');
+        
+          const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.setAttribute('href', url);
+          link.setAttribute('download', 'data.csv');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+
+        // IP-címek színének frissítése #pipa pipa
+        function updateIpColors(freshdata) {
+          ipListItems.forEach((li, index) => {
+              const ip = li.textContent.trim();
+              const panelCanvasId = `C_panel_${index + 1}`;
+              const batteryCanvasId = `C_battery_${index + 1}`;
+              const wifiCanvasId = `C_wifi_${index + 1}`;
+
+              const panelCanvas = document.getElementById(panelCanvasId);
+              const batteryCanvas = document.getElementById(batteryCanvasId);
+              const wifiCanvas = document.getElementById(wifiCanvasId);
+              
+              const panelVoltEntry = cutter("Panel_Volt", freshdata, ip);
+              const batteryVoltEntry = cutter("Battery_Volt", freshdata, ip);
+              //const wifiSignalEntry = sensorData.find(item => item[0] === "Wifi_signal");
+
+              const panelVolt = panelVoltEntry ? panelVoltEntry[1] / 10 : null;
+              const batteryVolt = batteryVoltEntry ? batteryVoltEntry[1] / 10 : null;
+              //const wifiSignal = wifiSignalEntry ? wifiSignalEntry[1] : null;
+
+              const nodeEntry = freshdata.find(entry => entry[1] === ip); 
+
+              if (nodeEntry && nodeEntry[2] && nodeEntry[2].length > 0) {
+                  li.style.color = 'green';
+
+                  if (panelVolt !== null) {
+                      drawVoltageIndicator(panelCanvas, panelVolt, 0, 25, 'Panel: ');
+                  } else {
+                      clearCanvas(panelCanvas);
+                  }
+                  
+                  if (batteryVolt !== null) {
+                      drawVoltageIndicator(batteryCanvas, batteryVolt, 11.6, 14, 'Batt: ');
+                  } else {
+                      clearCanvas(batteryCanvas);
+                  }
+
+                  /*if (wifiSignal !== null) {
+                      drawWifiIndicator(wifiCanvas, wifiSignal);
+                  } else {
+                      clearCanvas(wifiCanvas);
+                  }*/
+                  
+              } else {
+                  li.style.color = 'white';
+                  clearCanvas(panelCanvas);
+                  clearCanvas(batteryCanvas);
+                  //clearCanvas(wifiCanvas);
+              }
+          });
+        }
+      
+        // értékek kirajzolása rubrikákba #pipa pipa
+        // panel: 0-25V, battery: 11.6-14V
+        function drawVoltageIndicator(canvas, voltage, minVoltage, maxVoltage, prefix = '') {
+          if (!canvas) return;
+          
+          const ctx = canvas.getContext("2d");
+          const percentage = Math.min(100, Math.max(0, ((voltage - minVoltage) / (maxVoltage - minVoltage)) * 100));
+          
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          
+          ctx.strokeStyle = 'white';
+          ctx.strokeRect(0, 0, canvas.width, canvas.height);
+          
+          ctx.fillStyle = prefix.includes('Panel') ? '#4CAF50' : '#2196F3';
+          
+          const fillHeight = (canvas.height * percentage) / 100;
+          const yStart = canvas.height - fillHeight;
+          
+          ctx.fillRect(0, yStart, canvas.width, fillHeight);
+          
+          if (canvas.width > 25) {
+              ctx.fillStyle = 'white';
+              ctx.font = '8px Arial';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(`${prefix}${voltage.toFixed(1)}V`, canvas.width/2, canvas.height/2);
+          }
+        }
+        //canvas tisztitása #pipa pipa
+        function clearCanvas(canvas) {
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext("2d");
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'white';
+            ctx.strokeRect(0, 0, canvas.width, canvas.height);
+        }
+        //kirajzolja a lekért grafikont #pipa pipa
+        function graphDraw(data){
+          console.log("data:", data);
+
+          if (!data || data.length === 0) {
+            console.error("Nincsenek adatok a grafikonhoz!");
+            return;
+          }
+
+          if (chartInstance1 !== null) {
+            chartInstance1.destroy();
+          }
+
+          chartInstance1=new Chart(gbv, {
+                type: 'line',
+                data: {
+                  labels: data.map(item => item.x),
+                  datasets: [{
+                    label: 'Graf',
+                    data: data.map(item => item.y),
+                    borderColor: 'blue',
+                    borderWidth: 2
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  layout: {
+                  padding: {
+                      top: 20,
+                      right: 20,
+                      bottom: 20,
+                      left: 20
+                      }
+                  },
+                  plugins: {
+                      legend: {
+                          position: 'top',
+                          labels: {
+                              color: 'white'
+                          }
+                      }
+                  },
+                  scales: {
+                      x: {
+                          ticks: {
+                              color: 'white'
+                          },
+                          grid: {
+                              color: 'rgba(255, 255, 255, 0.1)'
+                          }
+                      },
+                      y: {
+                          ticks: {
+                              color: 'white'
+                          },
+                          grid: {
+                              color: 'rgba(255, 255, 255, 0.1)'
+                          }
+                      }
+                  }
+              }
+              });
+              
+              window.addEventListener('resize', function() {
+                chartInstance1.resize();
+              });
+        }
+        
+        //töltő képernyő #tesztelendő
+        function showLoader() {
+            loader.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function hideLoader() {
+            loader.style.display = 'none';
+            overlay.style.display = 'none';
+            content.style.display = 'flex';
+            ip_listt.style.display = 'block';
+            welcome_message.style.display = 'block';
+        }
+        
+        //percenkénti periodikus frissítés #pipa pipa
+        function startPeriodicUpdate() {
+            setInterval(async () => {
+                showLoader();
+                const freshdata = await fetchAndUpdate();
+                updateIpColors(freshdata);
+                hideLoader();
+            }, 60000);
+        }
+
+        //kezdetleges oldal indítás #pipa pipa
+        async function initialize() {
+            showLoader();
+            const freshdata = await fetchAndUpdate();
+            updateIpColors(freshdata);
+            hideLoader();
+            startPeriodicUpdate();    
+        }        
+        initialize(); 
+
+        const form = document.getElementById("historicalDataForm");
+
+        form.addEventListener('submit', async function(e) {
+          e.preventDefault();
+          
+          try {
+              resultDiv.innerHTML = "";
+              
+              const response = await fetch('/historical-data', {  
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: new URLSearchParams({
+                      hostid: document.getElementById('hostid').value,
+                      property: document.getElementById('property').value,
+                      start_datetime: document.getElementById('start_datetime').value + ':00Z',
+                      end_datetime: document.getElementById('end_datetime').value + ':00Z'
+                  })
+              });
+              
+              if (!response.ok) {
+                  const error = await response.text();
+                  throw new Error(error || `HTTP error! status: ${response.status}`);
+              }
+              
+              const data = await response.json();
+              console.log("Lekért adat:", data);
+              graphDraw(data);
+
+          } catch (error) {
+              console.error('Hiba történt:', error);
+              resultDiv.innerHTML = `<p style="color: red;">Hiba történt: ${error.message}</p>`;
+          }
+        });
+      </script>
+</body>
+</html>
