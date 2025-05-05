@@ -1,6 +1,6 @@
 [
   [
-    "2025-04-28 16:53:06.000000",
+    "2025-05-05 09:55:17.000000",
     "10.25.33.11",
     [
       [
@@ -13,7 +13,7 @@
       ],
       [
         "SYS_TimeStamp",
-        17791
+        7701
       ],
       [
         "SYS_Status",
@@ -29,15 +29,15 @@
       ],
       [
         "ZeroFilter",
-        1.7459220886230469
+        1.7470171451568604
       ],
       [
         "ConcentrationFilter",
-        2.8215718269348145
+        3.8198606967926025
       ],
       [
         "Concentration",
-        -5.340948581695557
+        -3.3201205730438232
       ],
       [
         "GPS_TimeStamp",
@@ -57,54 +57,49 @@
       ],
       [
         "ComCounter",
-        657
+        305
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        216
+        115
       ],
       [
         "Relative_humidity",
-        337
+        624
       ],
       [
         "Wind_direction",
-        1738
+        12
       ],
       [
         "Wind_speed",
-        16
+        72
       ],
       [
         "Pressure_pump",
-        1132
+        1148
       ],
       [
         "Battery_Volt",
-        141
+        134
       ],
       [
         "Panel_Volt",
-        141
+        158
       ]
     ]
   ],
   [
-    null,
+    "2025-05-05 09:55:18.000000",
     "10.25.33.216",
-    []
-  ],
-  [
-    "2025-04-28 16:53:18.000000",
-    "10.25.33.211",
     [
       [
         "Start",
-        1003
+        1004
       ],
       [
         "SYS_Type",
@@ -112,7 +107,7 @@
       ],
       [
         "SYS_TimeStamp",
-        41824
+        33636
       ],
       [
         "SYS_Status",
@@ -128,15 +123,109 @@
       ],
       [
         "ZeroFilter",
-        2.315019130706787
+        0.8697404861450195
       ],
       [
         "ConcentrationFilter",
-        2.6320009231567383
+        1.799440860748291
       ],
       [
         "Concentration",
-        1.5565226078033447
+        2.4125077724456787
+      ],
+      [
+        "GPS_TimeStamp",
+        0
+      ],
+      [
+        "Latitude",
+        48.050733
+      ],
+      [
+        "Longitude",
+        20.84566
+      ],
+      [
+        "ComWait",
+        0
+      ],
+      [
+        "ComCounter",
+        1
+      ],
+      [
+        "Barometric_pr",
+        9
+      ],
+      [
+        "Air_temperature",
+        114
+      ],
+      [
+        "Relative_humidity",
+        626
+      ],
+      [
+        "Wind_direction",
+        3553
+      ],
+      [
+        "Wind_speed",
+        45
+      ],
+      [
+        "Pressure_pump",
+        890
+      ],
+      [
+        "Battery_Volt",
+        134
+      ],
+      [
+        "Panel_Volt",
+        159
+      ]
+    ]
+  ],
+  [
+    "2025-05-05 09:55:18.000000",
+    "10.25.33.211",
+    [
+      [
+        "Start",
+        1003
+      ],
+      [
+        "SYS_Type",
+        5
+      ],
+      [
+        "SYS_TimeStamp",
+        31726
+      ],
+      [
+        "SYS_Status",
+        30
+      ],
+      [
+        "DeviceID",
+        44
+      ],
+      [
+        "EVState",
+        20
+      ],
+      [
+        "ZeroFilter",
+        2.3015410900115967
+      ],
+      [
+        "ConcentrationFilter",
+        3.913796901702881
+      ],
+      [
+        "Concentration",
+        2.9497790336608887
       ],
       [
         "GPS_TimeStamp",
@@ -156,39 +245,39 @@
       ],
       [
         "ComCounter",
-        35735
+        27468
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        220
+        110
       ],
       [
         "Relative_humidity",
-        351
+        673
       ],
       [
         "Wind_direction",
-        2081
+        3455
       ],
       [
         "Wind_speed",
-        10
+        51
       ],
       [
         "Pressure_pump",
-        589
+        593
       ],
       [
         "Battery_Volt",
-        141
+        133
       ],
       [
         "Panel_Volt",
-        223
+        140
       ]
     ]
   ],
@@ -203,7 +292,7 @@
     []
   ],
   [
-    "2025-04-28 16:53:07.000000",
+    "2025-05-05 09:55:17.000000",
     "10.25.33.221",
     [
       [
@@ -216,7 +305,7 @@
       ],
       [
         "SYS_TimeStamp",
-        35250
+        25165
       ],
       [
         "SYS_Status",
@@ -232,15 +321,15 @@
       ],
       [
         "ZeroFilter",
-        1.2235827445983887
+        1.1549757719039917
       ],
       [
         "ConcentrationFilter",
-        2.0931453704833984
+        3.4711618423461914
       ],
       [
         "Concentration",
-        1.1932947635650635
+        2.5239450931549072
       ],
       [
         "GPS_TimeStamp",
@@ -260,44 +349,44 @@
       ],
       [
         "ComCounter",
-        831
+        171
       ],
       [
         "Barometric_pr",
-        10
-      ],
-      [
-        "Air_temperature",
-        224
-      ],
-      [
-        "Relative_humidity",
-        349
-      ],
-      [
-        "Wind_direction",
-        2776
-      ],
-      [
-        "Wind_speed",
         9
       ],
       [
+        "Air_temperature",
+        114
+      ],
+      [
+        "Relative_humidity",
+        615
+      ],
+      [
+        "Wind_direction",
+        3587
+      ],
+      [
+        "Wind_speed",
+        82
+      ],
+      [
         "Pressure_pump",
-        509
+        520
       ],
       [
         "Battery_Volt",
-        141
+        134
       ],
       [
         "Panel_Volt",
-        215
+        158
       ]
     ]
   ],
   [
-    "2025-04-28 16:53:25.000000",
+    "2025-05-05 09:55:21.000000",
     "10.25.33.206",
     [
       [
@@ -310,7 +399,7 @@
       ],
       [
         "SYS_TimeStamp",
-        41743
+        31648
       ],
       [
         "SYS_Status",
@@ -326,15 +415,15 @@
       ],
       [
         "ZeroFilter",
-        2.128906488418579
+        2.4935238361358643
       ],
       [
         "ConcentrationFilter",
-        2.489593029022217
+        4.321660995483398
       ],
       [
         "Concentration",
-        1.4603853225708008
+        3.256530284881592
       ],
       [
         "GPS_TimeStamp",
@@ -354,44 +443,44 @@
       ],
       [
         "ComCounter",
-        9325
+        63336
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        230
+        110
       ],
       [
         "Relative_humidity",
-        389
+        671
       ],
       [
         "Wind_direction",
-        1135
+        45
       ],
       [
         "Wind_speed",
-        3
+        30
       ],
       [
         "Pressure_pump",
-        526
+        542
       ],
       [
         "Battery_Volt",
-        143
+        133
       ],
       [
         "Panel_Volt",
-        224
+        158
       ]
     ]
   ],
   [
-    "2025-04-28 16:53:31.000000",
+    "2025-05-05 09:55:20.000000",
     "10.25.33.241",
     [
       [
@@ -404,7 +493,7 @@
       ],
       [
         "SYS_TimeStamp",
-        43359
+        33253
       ],
       [
         "SYS_Status",
@@ -424,11 +513,11 @@
       ],
       [
         "ConcentrationFilter",
-        2.6939122676849365
+        2.9217305183410645
       ],
       [
         "Concentration",
-        1.643208622932434
+        1.878072738647461
       ],
       [
         "GPS_TimeStamp",
@@ -448,44 +537,44 @@
       ],
       [
         "ComCounter",
-        711
+        200
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        224
+        113
       ],
       [
         "Relative_humidity",
-        319
+        652
       ],
       [
         "Wind_direction",
-        1534
+        3403
       ],
       [
         "Wind_speed",
-        4
+        63
       ],
       [
         "Pressure_pump",
-        596
+        608
       ],
       [
         "Battery_Volt",
-        143
+        136
       ],
       [
         "Panel_Volt",
-        225
+        159
       ]
     ]
   ],
   [
-    "2025-04-28 16:53:05.000000",
+    "2025-05-05 09:55:18.000000",
     "10.25.33.236",
     [
       [
@@ -498,7 +587,7 @@
       ],
       [
         "SYS_TimeStamp",
-        42105
+        32023
       ],
       [
         "SYS_Status",
@@ -542,44 +631,44 @@
       ],
       [
         "ComCounter",
-        12050
+        51055
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        220
+        110
       ],
       [
         "Relative_humidity",
-        330
+        653
       ],
       [
         "Wind_direction",
-        1863
+        225
       ],
       [
         "Wind_speed",
-        6
+        67
       ],
       [
         "Pressure_pump",
-        502
+        530
       ],
       [
         "Battery_Volt",
-        141
+        134
       ],
       [
         "Panel_Volt",
-        228
+        158
       ]
     ]
   ],
   [
-    "2025-04-28 16:53:06.000000",
+    "2025-05-05 09:55:16.000000",
     "10.25.33.251",
     [
       [
@@ -592,7 +681,7 @@
       ],
       [
         "SYS_TimeStamp",
-        44385
+        34306
       ],
       [
         "SYS_Status",
@@ -608,15 +697,15 @@
       ],
       [
         "ZeroFilter",
-        0.8852655291557312
+        1.0584094524383545
       ],
       [
         "ConcentrationFilter",
-        1.8076940774917603
+        2.911130905151367
       ],
       [
         "Concentration",
-        1.5327937602996826
+        2.8883674144744873
       ],
       [
         "GPS_TimeStamp",
@@ -636,39 +725,39 @@
       ],
       [
         "ComCounter",
-        896
+        787
       ],
       [
         "Barometric_pr",
-        10
+        9
       ],
       [
         "Air_temperature",
-        218
+        112
       ],
       [
         "Relative_humidity",
-        338
+        658
       ],
       [
         "Wind_direction",
-        1938
+        136
       ],
       [
         "Wind_speed",
-        12
+        66
       ],
       [
         "Pressure_pump",
-        606
+        619
       ],
       [
         "Battery_Volt",
-        141
+        135
       ],
       [
         "Panel_Volt",
-        226
+        158
       ]
     ]
   ]

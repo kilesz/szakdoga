@@ -106,8 +106,30 @@
           <input type="datetime-local" id="end_datetime" name="end_datetime" required>
           
           <button type="submit">Submit</button>
+          
       </form>
-    
+          <form id="queryForm">
+          <label for="queryname">Query name:</label>
+          <input type="text" id="queryname" name="queryname">
+          <button type="button" onclick="saveQuery()">Save</button>
+
+          <label for="queryloader">Select the query you want to load:</label>
+          <select id="queryloader" name="queryloader" onchange="loadQuery()">
+            <option value="">-- Select a saved query --</option>
+          </select>
+          <button type="button" onclick="deleteQuery()">Delete Selected Query</button>
+          <button type="button" onclick="setAsFavorite()">Favorite</button>
+          <div id="favorite-display" style="margin-top: 10px;"></div>
+      </form>
+
+      <input type="number" id="windowInput" placeholder="Ablakméret" min="1">
+      <button onclick="enableMovingAverage()">Ablakos átlagolás</button>
+
+      <select id="correlateQuery1"></select>
+      <select id="correlateQuery2"></select>
+      <button onclick="runCorrelation()">Korreláció számítása</button>
+      <div id="correlationResult" style="color: white; margin-top: 10px;"></div>
+
       <div id="resultDiv"></div>
       <div class="page-section">
         <div class="chart-section">
@@ -121,8 +143,11 @@
     </div>
     <div id="background-overlay"></div>
   </div>
-    
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+      <script>
+        console.log(window);
+        Chart.register(ChartZoom);</script>
       <script>
 
         const gbv = document.getElementById('batteryVolt');
@@ -136,17 +161,20 @@
         const ipListItems = document.querySelectorAll('.ips li');
         const resultDiv = document.getElementById("resultDiv");
         const result = document.getElementById("result");
+        const queryname = document.getElementById("queryname");
 
         const data = [];
+        let globalData = [];
         let chartInstance1 = null;
         let csvSave = 0;
+        let qSace = 0;
         let lastDisplayedData = null;
 
-        //megoldani a töltő képernyőt
-
         //kerekítés
-        function rounding(value){
-          return value ? value / 10 : null;
+        function rounding(value, decimals = 2) {
+          if (value === null || isNaN(value)) return null;
+          const factor = Math.pow(10, decimals);
+          return Math.round(value * factor) / factor;
         }
 
         // A freshdata ip cím alapján való adat keresése #pipa pipa
@@ -275,7 +303,7 @@
           rows.unshift([ipKey, ipValue]);
         
           let csvContent = headers.join(',') + '\n';
-          csvContent += rows.map(row => row.join(',')).join('\n');
+          csvContent += rows.map(row => row.join(':')).join('\n');
         
           const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(blob);
@@ -377,7 +405,7 @@
             ctx.strokeRect(0, 0, canvas.width, canvas.height);
         }
         //kirajzolja a lekért grafikont #pipa pipa
-        function graphDraw(data){
+        function graphDraw(data,windowSize = null){
           console.log("data:", data);
 
           if (!data || data.length === 0) {
@@ -388,56 +416,84 @@
           if (chartInstance1 !== null) {
             chartInstance1.destroy();
           }
+          Chart.register(ChartZoom);
+
+          const datasets = [
+            {
+              label: 'Graf',
+              data: data.map(item => item.y),
+              borderColor: 'blue',
+              borderWidth: 2,
+              tension: 0.1
+            }
+          ];
+
+          // Ablakos átlagolás
+          if (windowSize && windowSize > 1 && windowSize <= data.length) {
+            const averagedData = movingAverage(data, windowSize);
+            datasets.push({
+              label: `Mozgóátlag (${windowSize})`,
+              data: averagedData.map(item => ({ x: item.x, y: item.y })),
+              borderColor: 'red',
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.1
+            });
+          }
 
           chartInstance1=new Chart(gbv, {
                 type: 'line',
                 data: {
                   labels: data.map(item => item.x),
-                  datasets: [{
-                    label: 'Graf',
-                    data: data.map(item => item.y),
-                    borderColor: 'blue',
-                    borderWidth: 2
-                  }]
+                  datasets: datasets
                 },
                 options: {
-                  responsive: true,
-                  maintainAspectRatio: false,
-                  layout: {
-                  padding: {
-                      top: 20,
-                      right: 20,
-                      bottom: 20,
-                      left: 20
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    layout: {
+                      padding: {
+                        top: 20,
+                        right: 20,
+                        bottom: 20,
+                        left: 20
                       }
-                  },
-                  plugins: {
+                    },
+                    plugins: {
                       legend: {
-                          position: 'top',
-                          labels: {
-                              color: 'white'
-                          }
-                      }
-                  },
-                  scales: {
-                      x: {
-                          ticks: {
-                              color: 'white'
+                        position: 'top',
+                        labels: {
+                          color: 'white'
+                        }
+                      },
+                      zoom: {
+                        pan: {
+                          enabled: true,
+                          mode: 'xy',
+                          drag: true 
+                        },
+                        zoom: {
+                          wheel: {
+                            enabled: true,
+                            modifierKey: 'ctrl'
                           },
-                          grid: {
-                              color: 'rgba(255, 255, 255, 0.1)'
-                          }
+                          pinch: {
+                            enabled: true
+                          },
+                          mode: 'xy',
+                        }                  
+                      }
+                    },
+                    scales: {
+                      x: {
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
                       },
                       y: {
-                          ticks: {
-                              color: 'white'
-                          },
-                          grid: {
-                              color: 'rgba(255, 255, 255, 0.1)'
-                          }
+                        ticks: { color: 'white' },
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' }
                       }
+                    }
                   }
-              }
               });
               
               window.addEventListener('resize', function() {
@@ -445,7 +501,7 @@
               });
         }
         
-        //töltő képernyő #tesztelendő
+        //töltő képernyő #pipa pipa
         function showLoader() {
             loader.style.display = 'block';
             overlay.style.display = 'block';
@@ -476,14 +532,411 @@
             updateIpColors(freshdata);
             hideLoader();
             startPeriodicUpdate();    
-        }        
+        }
+
+        //Elmenteni a lekérdezést #pipa pipa
+        function saveQuery(){
+          const queryName = document.getElementById('queryname').value.trim();
+
+          if (!queryName) {
+            alert("Please enter a query name!");
+            return;
+          }
+
+          const formData = {
+            hostid: document.getElementById('hostid').value,
+            property: document.getElementById('property').value,
+            start_datetime: document.getElementById('start_datetime').value,
+            end_datetime: document.getElementById('end_datetime').value
+          };
+
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
+          savedQueries[queryName] = formData;
+          localStorage.setItem('savedQueries', JSON.stringify(savedQueries));
+
+          updateQueryDropdown();
+          alert(`Query "${queryName}" saved successfully!`);
+        }
+        
+        //Elmentet lekérdezések listázása #pipa pipa
+        function updateQueryDropdown() {
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
+          const dropdown = document.getElementById('queryloader');
+        
+          dropdown.innerHTML = '<option value="">-- Select a saved query --</option>';
+        
+          Object.keys(savedQueries).forEach(queryName => {
+            const option = document.createElement('option');
+            option.value = queryName;
+            option.textContent = queryName;
+            dropdown.appendChild(option);
+          });          
+        }
+
+        //Lekérdezés betöltése #pipa pipa
+        function loadQuery() {
+          const dropdown = document.getElementById('queryloader');
+          const selectedQueryName = dropdown.value;
+        
+          if (!selectedQueryName) return;
+        
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
+          const queryData = savedQueries[selectedQueryName];
+        
+          if (queryData) {
+            document.getElementById('hostid').value = queryData.hostid || '';
+            document.getElementById('property').value = queryData.property || '';
+            document.getElementById('start_datetime').value = queryData.start_datetime || '';
+            document.getElementById('end_datetime').value = queryData.end_datetime || '';
+          }
+        }
+
+        //Alapértelmezett(kedvenc) kiírása
+        const favoriteName = localStorage.getItem('favoriteQuery');
+        if (favoriteName) {
+          document.getElementById('favorite-display').textContent = `Alapértelmezett: ${favoriteName}`;
+        }
+
+        //Alapértelmezett(kedvenc) lekérdezés beállítása
+        function setAsFavorite() {
+          const selectedQuery = document.getElementById('queryloader').value;
+          if (!selectedQuery) {
+            alert("Előbb válassz ki egy lekérdezést a listából!");
+            return;
+          }
+          
+          localStorage.setItem('favoriteQuery', selectedQuery);
+          alert(`"${selectedQuery}" most már az alapértelmezett lekérdezésed!`);
+        }
+
+        //Lekérdezés törlése #pipa pipa
+        function deleteQuery() {  
+          const selectedQuery = document.getElementById('queryloader').value;
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries'));
+          delete savedQueries[selectedQuery];
+          localStorage.setItem('savedQueries', JSON.stringify(savedQueries));
+          updateQueryDropdown();
+        }
+
+        //Pearson-féle korrelációs együttható számítása #pipa pipa
+        function calculateCorrelation(data1, data2) {
+          if (!data1 || !data2 || data1.length !== data2.length || data1.length < 2) {
+            return null;
+          }
+          const arr1 = Array.isArray(data1) ? data1.map(item => item.x || item) : [];
+          const arr2 = Array.isArray(data2) ? data2.map(item => item.x || item) : [];
+        
+          const n = arr1.length;
+          const mean1 = arr1.reduce((a, b) => a + b, 0) / n;
+          const mean2 = arr2.reduce((a, b) => a + b, 0) / n;
+        
+          let covariance = 0;
+          let variance1 = 0;
+          let variance2 = 0;
+        
+          for (let i = 0; i < n; i++) {
+            const diff1 = arr1[i] - mean1;
+            const diff2 = arr2[i] - mean2;
+            covariance += diff1 * diff2;
+            variance1 += diff1 * diff1;
+            variance2 += diff2 * diff2;
+          }
+        
+          const denominator = Math.sqrt(variance1 * variance2);
+          
+          return denominator === 0 ? null : covariance / denominator;
+        }
+
+        //korreéláció müveletek meghívása #pipa pipa
+        async function runCorrelation() {
+          try {
+            const query1 = document.getElementById('correlateQuery1').value;
+            const query2 = document.getElementById('correlateQuery2').value;
+            
+            if (!query1 || !query2) {
+              alert("Válassz ki két lekérdezést a korrelációhoz!");
+              return;
+            }
+        
+            showLoader();
+            
+            const response1 = await fetchQueryData(query1);
+            const response2 = await fetchQueryData(query2);
+            
+            const alignedData = alignDataByTime(response1, response2);
+            
+            if (!alignedData || alignedData.data1.length < 2) {
+              throw new Error("Nincs elég közös adatpont a korrelációhoz!");
+            }
+        
+            const correlation = calculateCorrelation(alignedData.data1, alignedData.data2);
+            const roundedCorr = rounding(correlation, 3);
+            
+            displayCorrelationResult(query1, query2, roundedCorr, alignedData.data1.length);
+            
+            drawCorrelationChart(alignedData.data1, alignedData.data2, query1, query2);
+            
+          } catch (error) {
+            console.error("Hiba a korreláció számítása közben:", error);
+            document.getElementById('correlationResult').innerHTML = 
+              `<span style="color: red;">Hiba: ${error.message}</span>`;
+          } finally {
+            hideLoader();
+          }
+        }
+
+        //korreláció mentett adatok lekérdezése #pipa pipa
+        async function fetchQueryData(queryName) {
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
+          const query = savedQueries[queryName];
+          
+          if (!query) {
+            throw new Error(`Nem található a(z) ${queryName} lekérdezés!`);
+          }
+        
+          const response = await fetch('/historical-data', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+              hostid: query.hostid,
+              property: query.property,
+              start_datetime: query.start_datetime,
+              end_datetime: query.end_datetime
+            })
+          });
+        
+          if (!response.ok) {
+            throw new Error(`Hálózati hiba: ${response.status}`);
+          }
+        
+          return await response.json();
+        }
+
+        //korreláció idő alapú szelektálás
+        function alignDataByTime(data1, data2) {
+          const map1 = createTimeMap(data1);
+          const map2 = createTimeMap(data2);
+          
+          const commonTimes = new Set([...Object.keys(map1), ...Object.keys(map2)]);
+          
+          const aligned1 = [];
+          const aligned2 = [];
+          
+          commonTimes.forEach(time => {
+            if (map1[time] && map2[time]) {
+              aligned1.push(map1[time]);
+              aligned2.push(map2[time]);
+            }
+          });
+          
+          return {
+            data1: aligned1,
+            data2: aligned2,
+            commonCount: aligned1.length
+          };
+        }
+        //korreláció kulcsok létrehozása idő alapján
+        function createTimeMap(data) {
+          const map = {};
+          data.forEach(item => {
+            const timeKey = new Date(item.x).toISOString().slice(0, 16);
+            map[timeKey] = item.y;
+          });
+          return map;
+        }
+
+        //korreláció eredmény kiírása #pipa pipa
+        function displayCorrelationResult(query1, query2, correlation, dataPoints) {
+          const resultDiv = document.getElementById('correlationResult');
+          
+          let interpretation = "";
+          if (correlation !== null) {
+            const absCorr = Math.abs(correlation);
+            if (absCorr > 0.8) {
+              interpretation = "Erős korreláció";
+            } else if (absCorr > 0.5) {
+              interpretation = "Közepes korreláció";
+            } else if (absCorr > 0.3) {
+              interpretation = "Gyenge korreláció";
+            } else {
+              interpretation = "Nagyon gyenge vagy nincs korreláció";
+            }
+            
+            const direction = correlation > 0 ? "pozitív" : "negatív";
+            interpretation += `, ${direction} irányú`;
+          }
+          
+          resultDiv.innerHTML = `
+            <div style="margin: 10px 0; padding: 10px; background: rgba(255,255,255,0.1); border-radius: 5px;">
+              <h3>Korreláció eredménye</h3>
+              <p><strong>${query1}</strong> és <strong>${query2}</strong> között:</p>
+              <p style="font-size: 24px; font-weight: bold; color: ${getCorrelationColor(correlation)}">
+                ${correlation !== null ? correlation : "Nem számolható"}
+              </p>
+              ${correlation !== null ? `
+                <p>${interpretation}</p>
+                <p>Alapjául szolgáló adatpontok száma: ${dataPoints}</p>
+              ` : ''}
+            </div>
+          `;
+        }
+
+        //korreláció színe #pipa pipa
+        function getCorrelationColor(correlation) {
+          if (correlation === null) return "gray";
+          const absCorr = Math.abs(correlation);
+          if (absCorr > 0.7) return "#4CAF50"; 
+          if (absCorr > 0.4) return "#FFC107"; 
+          if (absCorr > 0.1) return "#FF9800"; 
+          return "#F44336";
+        }
+
+        function drawCorrelationChart(data1, data2, label1, label2) {
+          const ctx = document.createElement('canvas');
+          ctx.style.maxHeight = "400px";
+          ctx.style.width = "100%";
+          
+          const container = document.getElementById('correlationResult');
+          container.appendChild(ctx);
+          
+          new Chart(ctx, {
+            type: 'scatter',
+            data: {
+              datasets: [
+                {
+                  label: `${label1} vs ${label2}`,
+                  data: data1.map((val, i) => ({x: val, y: data2[i]})),
+                  borderColor: '#3e95cd',
+                  backgroundColor: '#3e95cd80',
+                  pointRadius: 5
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                title: {
+                  display: true,
+                  text: 'Korrelációs diagram',
+                  color: 'white'
+                },
+                legend: {
+                  labels: {
+                    color: 'white'
+                  }
+                }
+              },
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: label1,
+                    color: 'white'
+                  },
+                  ticks: { color: 'white' },
+                  grid: { color: 'rgba(255,255,255,0.1)' }
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: label2,
+                    color: 'white'
+                  },
+                  ticks: { color: 'white' },
+                  grid: { color: 'rgba(255,255,255,0.1)' }
+                }
+              }
+            }
+          });
+        }
+
+        //Ablakos átlag felületi beállítások #pipa pipa
+        function updateCorrelationDropdowns() {
+          const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
+          const dropdown1 = document.getElementById('correlateQuery1');
+          const dropdown2 = document.getElementById('correlateQuery2');
+          
+          dropdown1.innerHTML = '';
+          dropdown2.innerHTML = '';
+          
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = '-- Válassz lekérdezést --';
+          dropdown1.appendChild(defaultOption.cloneNode(true));
+          dropdown2.appendChild(defaultOption.cloneNode(true));
+          
+          Object.keys(savedQueries).forEach(queryName => {
+            const option = document.createElement('option');
+            option.value = queryName;
+            option.textContent = queryName;
+            dropdown1.appendChild(option.cloneNode(true));
+            dropdown2.appendChild(option.cloneNode(true));
+          });
+        }
+
+        //Ablakos átlag számítás #pipa pipa
+        function movingAverage(data, windowSize) {
+          const result = [];
+          for (let i = 0; i <= data.length - windowSize; i++) {
+            let sum = 0;
+            for (let j = 0; j < windowSize; j++) {
+              sum += data[i + j].y;
+            }
+            result.push({
+              x: data[i + Math.floor(windowSize / 2)].x,
+              y: sum / windowSize
+            });
+          }
+          return result;
+        }
+        
+        //Ablakos átlag hibakezelés #pipa pipa
+        function enableMovingAverage() {
+          const input = document.getElementById("windowInput");
+          const windowSize = parseInt(input.value);
+        
+          if (!globalData || globalData.length === 0) {
+            alert("Először kérj le adatot!");
+            return;
+          }
+        
+          if (isNaN(windowSize) || windowSize <= 1 || windowSize > globalData.length) {
+            alert("Adj meg egy 2 és " + globalData.length + " közötti ablakméretet!");
+            return;
+          }
+        
+          graphDraw(globalData, windowSize);
+        }
+
         initialize(); 
+
+        //Oldal betöltésekor zajló műveletek #pipa pipa
+        document.addEventListener('DOMContentLoaded', function() {
+          updateQueryDropdown();
+          updateCorrelationDropdowns();
+          
+          const favoriteQuery = localStorage.getItem('favoriteQuery');
+          if (favoriteQuery) {
+            document.getElementById('queryloader').value = favoriteQuery;
+            loadQuery();
+          }
+        });
+
+        //Görgővel zoomolás ctrl+görgővel #pipa pipa
+        gbv.addEventListener('wheel', function(evt) {
+          if (!evt.ctrlKey) {
+            evt.preventDefault();
+          }
+        }, { passive: false });
 
         const form = document.getElementById("historicalDataForm");
 
+        // A submit gombra általi grafikon lekérdezés #pipa pipa
         form.addEventListener('submit', async function(e) {
           e.preventDefault();
-          
+          showLoader();
           try {
               resultDiv.innerHTML = "";
               
@@ -507,13 +960,19 @@
               
               const data = await response.json();
               console.log("Lekért adat:", data);
+              globalData = data;
               graphDraw(data);
+              
 
           } catch (error) {
               console.error('Hiba történt:', error);
               resultDiv.innerHTML = `<p style="color: red;">Hiba történt: ${error.message}</p>`;
+          } finally {
+            hideLoader();
           }
         });
+
       </script>
+      
 </body>
 </html>
