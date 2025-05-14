@@ -14,6 +14,7 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(express.static(path.join(__dirname, "templates")));
 
 const fetchData = async () => {
@@ -48,7 +49,69 @@ const fetchData = async () => {
     }
 };
 
-// New API endpoint for historical data
+app.post("/positions", async (req, res) => {
+    try {
+        const targetUrl = "http://mazsola.iit.uni-miskolc.hu/~qgeroli5/fgsz/index.php";
+        console.log(`Fetching positions data from ${targetUrl}`);
+
+        const response = await fetch(targetUrl, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json"
+            },
+            body: "positions"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const positions = await response.json();
+        
+        const jsonFilePath = path.join(__dirname, "templates", "Positions.json");
+        fs.writeFileSync(jsonFilePath, JSON.stringify(positions, null, 2));
+        console.log("Positions data successfully saved to Positions.json");
+        
+        res.json(positions);
+    } catch (error) {
+        console.error("Error fetching positions data:", error);
+        res.status(500).json({ 
+            error: "Failed to fetch positions data",
+            details: error.message 
+        });
+    }
+});
+
+app.post("/hosts", async (req, res) => {
+    try {
+        const targetUrl = "http://mazsola.iit.uni-miskolc.hu/~qgeroli5/fgsz/index.php";
+        console.log(`Fetching hosts list from ${targetUrl}`);
+
+        const response = await fetch(targetUrl, {
+            method: "POST",
+            headers: { 
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Accept": "application/json"
+            },
+            body: "hosts"
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const hosts = await response.json();
+        res.json(hosts);
+    } catch (error) {
+        console.error("Error fetching hosts list:", error);
+        res.status(500).json({ 
+            error: "Failed to fetch hosts list",
+            details: error.message 
+        });
+    }
+});
+
 app.post("/historical-data", async (req, res) => {
     try {
         const { hostid, property, start_datetime, end_datetime } = req.body;
@@ -132,17 +195,20 @@ app.get("/data", (req, res) => {
 
 // Szerver indítás és adatlekérdezés
 const startServer = async () => {
-    // Adatok lekérése a szerver indításakor
-    await fetchData();
-    
-    // Szerver indítása
+    //Ha nem akar elindulni a szerver, akkor csak kommenteld ki a következő sort:
+    //await fetchData();
+
     app.listen(PORT, () => {
         console.log(`Server running: http://127.0.0.1:${PORT}`);
         setTimeout(() => {
             open(`http://127.0.0.1:${PORT}`);
         }, 1000);
+        /*
+        setInterval(async () => {
+            await fetchData();
+        }, 60 * 1000);
+        */
     });
 };
 
-// Szerver indítása
 startServer();

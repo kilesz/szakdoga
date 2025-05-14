@@ -5,73 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>weatherpage</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 </head>
 <body>
-  <div class="main-content">
-    <div class="sidenav">
-        <div id="ip-listt" class="ip-listt">
-          <h2>IP Addresses</h2>
-          <div class="ips">
-              <ul>
-                  <li onclick="choosenDescribe('10.25.33.11')">10.25.33.11<br>
-                  <canvas id="C_panel_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.216')">10.25.33.216<br>
-                  <canvas id="C_panel_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.211')">10.25.33.211<br>
-                  <canvas id="C_panel_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.201')">10.25.33.201<br>
-                  <canvas id="C_panel_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.231')">10.25.33.231<br>
-                  <canvas id="C_panel_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.221')">10.25.33.221<br>
-                  <canvas id="C_panel_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.206')">10.25.33.206<br>
-                  <canvas id="C_panel_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.241')">10.25.33.241<br>
-                  <canvas id="C_panel_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.236')">10.25.33.236<br>
-                  <canvas id="C_panel_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-                  <li onclick="choosenDescribe('10.25.33.251')">10.25.33.251<br>
-                  <canvas id="C_panel_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_battery_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
-                  <canvas id="C_wifi_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
-              </ul>
-          </div>
-          <button onclick="fetchAndUpdate()">Update Datas</button>
+  <div class="sidenav">
+    <div id="ip-listt" class="ip-listt">
+      <h2>IP Addresses</h2>
+      <div class="ips">
+          <ul>
+              <li onclick="choosenDescribe('10.25.33.11')">10.25.33.11<br>
+              <canvas id="C_panel_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_1" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.216')">10.25.33.216<br>
+              <canvas id="C_panel_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_2" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.211')">10.25.33.211<br>
+              <canvas id="C_panel_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_3" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.201')">10.25.33.201<br>
+              <canvas id="C_panel_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_4" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.231')">10.25.33.231<br>
+              <canvas id="C_panel_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_5" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.221')">10.25.33.221<br>
+              <canvas id="C_panel_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_6" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.206')">10.25.33.206<br>
+              <canvas id="C_panel_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_7" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.241')">10.25.33.241<br>
+              <canvas id="C_panel_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_8" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.236')">10.25.33.236<br>
+              <canvas id="C_panel_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_9" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+              <li onclick="choosenDescribe('10.25.33.251')">10.25.33.251<br>
+              <canvas id="C_panel_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_battery_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas>
+              <canvas id="C_wifi_10" class="status-canvas" style="border:1px solid #FFFFFF;"></canvas></li>
+          </ul>
       </div>
+      <button onclick="fetchAndUpdate()">Update Datas</button>
     </div>
+  </div>
+  <div class="main-content">
     
     <div id="loader" class="loader"></div>
     <h1 id="welcome-message" class="welcome-message">Welcome on my Weatherpage!</h1>
     <div id="content" class="content-container">
-      
-       
-      <div id="list" class="page-section"></div>
-      <button onclick="csvDownload()">Download Data</button>
-
       <h1>Data Query</h1>
     
       <form id="historicalDataForm" class="page-section">
           <label for="hostid">Host ID:</label>
-          <input type="text" id="hostid" name="hostid" value="10.25.33.11" required>
+          <select id="hostid" name="hostid" required>
+          </select>
           
           <label for="property">Property:</label>
           <select id="property" name="property" required>
@@ -105,10 +102,10 @@
           <label for="end_datetime">End time:</label>
           <input type="datetime-local" id="end_datetime" name="end_datetime" required>
           
-          <button type="submit">Submit</button>
+          <button type="submit" id="submit">Submit</button>
           
       </form>
-          <form id="queryForm">
+      <form id="queryForm">
           <label for="queryname">Query name:</label>
           <input type="text" id="queryname" name="queryname">
           <button type="button" onclick="saveQuery()">Save</button>
@@ -122,14 +119,20 @@
           <div id="favorite-display" style="margin-top: 10px;"></div>
       </form>
 
-      <input type="number" id="windowInput" placeholder="Ablakméret" min="1">
-      <button onclick="enableMovingAverage()">Ablakos átlagolás</button>
+      <div class="inline-form">
+        <input type="number" id="windowInput" placeholder="Ablakméret" min="1">
+        <button onclick="enableMovingAverage()">Ablakos átlagolás</button>
+      </div>
+      <div class="inline-form">
+        <select id="correlateQuery1"></select>
+        <select id="correlateQuery2"></select>
+        <button onclick="runCorrelation()">Korreláció számítása</button>
+      </div>
 
-      <select id="correlateQuery1"></select>
-      <select id="correlateQuery2"></select>
-      <button onclick="runCorrelation()">Korreláció számítása</button>
       <div id="correlationResult" style="color: white; margin-top: 10px;"></div>
 
+      <div id="list" ></div>
+      <button onclick="csvDownload()" style="width: 200px;">Download Data</button>
       <div id="resultDiv"></div>
       <div class="page-section">
         <div class="chart-section">
@@ -138,16 +141,20 @@
         </div>
         </div>
       </div>
+      <div id="map"></div>
+
       </div>
 
     </div>
     <div id="background-overlay"></div>
   </div>
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
       <script>
         console.log(window);
-        Chart.register(ChartZoom);</script>
+        Chart.register(ChartZoom);
+      </script>
       <script>
 
         const gbv = document.getElementById('batteryVolt');
@@ -170,6 +177,70 @@
         let qSace = 0;
         let lastDisplayedData = null;
 
+        var map = L.map('map').setView([47.4979, 19.0402], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap közreműködők'
+        }).addTo(map);
+
+        // mapikon beállítása
+        var nodeIcon = L.icon({
+            iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34]
+        });
+        
+        async function mapDrawPosition(){
+          try {
+            const response = await fetch('/positions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'positions'
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP hiba: ${response.status}`);
+            }
+
+            const positions = await response.json();
+            
+            // Előző markerek törlése
+            map.eachLayer(layer => {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+          // Új markerek hozzáadása
+          for (const [id, node] of Object.entries(positions)) {
+              const marker = L.marker([node.Latitude, node.Longitude], {
+                  icon: nodeIcon
+              }).addTo(map);
+              
+              marker.bindPopup(`
+                  <b>Node ${id}</b><br>
+                  IP: ${node.IP}<br>
+                  Koordináták: ${node.Latitude.toFixed(6)}, ${node.Longitude.toFixed(6)}
+              `);
+          }
+
+          // Automatikus zoomolás az összes marker-re, ha vannak adatok
+          if (Object.keys(positions).length > 0) {
+              const markers = Object.values(positions).map(node => [node.Latitude, node.Longitude]);
+              const bounds = L.latLngBounds(markers);
+              map.fitBounds(bounds, { padding: [50, 50] });
+          }
+
+          } catch (err) {
+              console.error("Hiba a pozíciók lekérésekor:", err);
+              alert("Hiba történt a pozíciók betöltésekor. Próbáld újra később.");
+          }
+        }
+        
         //kerekítés
         function rounding(value, decimals = 2) {
           if (value === null || isNaN(value)) return null;
@@ -217,7 +288,7 @@
                 let value = entry[1];
 
                 if (key === "Battery_Volt" || key === "Panel_Volt") {
-                  value = value / 10;
+                  value = rounding(value / 10);
                 }
 
                 text += `${key}: ${value}\n`;
@@ -331,14 +402,14 @@
               const batteryVoltEntry = cutter("Battery_Volt", freshdata, ip);
               //const wifiSignalEntry = sensorData.find(item => item[0] === "Wifi_signal");
 
-              const panelVolt = panelVoltEntry ? panelVoltEntry[1] / 10 : null;
-              const batteryVolt = batteryVoltEntry ? batteryVoltEntry[1] / 10 : null;
+              const panelVolt = panelVoltEntry ? rounding(panelVoltEntry[1] / 10) : null;
+              const batteryVolt = batteryVoltEntry ? rounding(batteryVoltEntry[1] / 10) : null;
               //const wifiSignal = wifiSignalEntry ? wifiSignalEntry[1] : null;
 
               const nodeEntry = freshdata.find(entry => entry[1] === ip); 
 
               if (nodeEntry && nodeEntry[2] && nodeEntry[2].length > 0) {
-                  li.style.color = 'green';
+                  li.style.color = '#90ee90';
 
                   if (panelVolt !== null) {
                       drawVoltageIndicator(panelCanvas, panelVolt, 0, 25, 'Panel: ');
@@ -525,14 +596,7 @@
             }, 60000);
         }
 
-        //kezdetleges oldal indítás #pipa pipa
-        async function initialize() {
-            showLoader();
-            const freshdata = await fetchAndUpdate();
-            updateIpColors(freshdata);
-            hideLoader();
-            startPeriodicUpdate();    
-        }
+
 
         //Elmenteni a lekérdezést #pipa pipa
         function saveQuery(){
@@ -591,13 +655,13 @@
           }
         }
 
-        //Alapértelmezett(kedvenc) kiírása
+        //Alapértelmezett(kedvenc) kiírása #pipa pipa
         const favoriteName = localStorage.getItem('favoriteQuery');
         if (favoriteName) {
           document.getElementById('favorite-display').textContent = `Alapértelmezett: ${favoriteName}`;
         }
 
-        //Alapértelmezett(kedvenc) lekérdezés beállítása
+        //Alapértelmezett(kedvenc) lekérdezés beállítása #pipa pipa
         function setAsFavorite() {
           const selectedQuery = document.getElementById('queryloader').value;
           if (!selectedQuery) {
@@ -617,6 +681,8 @@
           localStorage.setItem('savedQueries', JSON.stringify(savedQueries));
           updateQueryDropdown();
         }
+
+
 
         //Pearson-féle korrelációs együttható számítása #pipa pipa
         function calculateCorrelation(data1, data2) {
@@ -853,7 +919,7 @@
           });
         }
 
-        //Ablakos átlag felületi beállítások #pipa pipa
+        //korreláció input beállítások #pipa pipa
         function updateCorrelationDropdowns() {
           const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
           const dropdown1 = document.getElementById('correlateQuery1');
@@ -876,6 +942,8 @@
             dropdown2.appendChild(option.cloneNode(true));
           });
         }
+
+
 
         //Ablakos átlag számítás #pipa pipa
         function movingAverage(data, windowSize) {
@@ -911,10 +979,62 @@
           graphDraw(globalData, windowSize);
         }
 
-        initialize(); 
+
+
+        async function loadHosts() {
+          try {
+              const response = await fetch('/hosts', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/x-www-form-urlencoded',
+                  },
+                  body: 'hosts'
+              });
+              
+              if (!response.ok) {
+                  throw new Error(`HTTP error! status: ${response.status}`);
+              }
+              
+              const hosts = await response.json();
+              const hostSelect = document.getElementById('hostid');
+              
+              while (hostSelect.firstChild) {
+                  hostSelect.removeChild(hostSelect.firstChild);
+              }
+              
+              hosts.forEach(host => {
+                  const option = document.createElement('option');
+                  option.value = host;
+                  option.textContent = host;
+                  hostSelect.appendChild(option);
+              });
+              
+              if (hosts.length > 0) {
+                  hostSelect.value = hosts[0];
+              }
+              
+          } catch (error) {
+              console.error('Hiba a hosztok betöltésekor:', error);
+              const errorDiv = document.createElement('div');
+              errorDiv.style.color = 'red';
+              errorDiv.textContent = 'Hiba a hosztok betöltésekor. Próbálja újra később.';
+              document.getElementById('historicalDataForm').prepend(errorDiv);
+          }
+        }
+
+ 
 
         //Oldal betöltésekor zajló műveletek #pipa pipa
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded',async function() {
+          
+          showLoader();
+          const freshdata = await fetchAndUpdate();
+          updateIpColors(freshdata);
+          mapDrawPosition();
+          hideLoader();
+          startPeriodicUpdate();  
+
+          loadHosts();
           updateQueryDropdown();
           updateCorrelationDropdowns();
           
@@ -922,7 +1042,13 @@
           if (favoriteQuery) {
             document.getElementById('queryloader').value = favoriteQuery;
             loadQuery();
+            setTimeout(() => {
+              if (form) {
+                form.requestSubmit();
+              }
+            }, 1000);
           }
+          
         });
 
         //Görgővel zoomolás ctrl+görgővel #pipa pipa
