@@ -141,7 +141,10 @@
         </div>
         </div>
       </div>
-      <div id="map"></div>
+      <div id="map-container">
+          <div id="map"></div>
+          <button id="wind-map-btn" class="map-toggle-btn">Szél térkép</button>
+      </div>
 
       </div>
 
@@ -151,6 +154,7 @@
       <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@2.0.1/dist/chartjs-plugin-zoom.min.js"></script>
+      <script src="https://unpkg.com/leaflet-arrowheads@1.3.0/dist/leaflet-arrowheads.js"></script>
       <script>
         console.log(window);
         Chart.register(ChartZoom);
@@ -190,17 +194,11 @@
             iconSize: [25, 41],
             iconAnchor: [12, 41],
             popupAnchor: [1, -34]
-        });
-        
+        });        
+
         async function mapDrawPosition(){
           try {
-            const response = await fetch('/positions', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'positions'
-            });
+            const response = await fetch('/positions');
             
             if (!response.ok) {
                 throw new Error(`HTTP hiba: ${response.status}`);
@@ -240,6 +238,8 @@
               alert("Hiba történt a pozíciók betöltésekor. Próbáld újra később.");
           }
         }
+
+
         
         //kerekítés
         function rounding(value, decimals = 2) {
@@ -620,6 +620,7 @@
 
           updateQueryDropdown();
           alert(`Query "${queryName}" saved successfully!`);
+
         }
         
         //Elmentet lekérdezések listázása #pipa pipa
@@ -981,15 +982,10 @@
 
 
 
+        //A hosztok betöltése a legördülő menübe #pipa pipa
         async function loadHosts() {
           try {
-              const response = await fetch('/hosts', {
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded',
-                  },
-                  body: 'hosts'
-              });
+              const response = await fetch('/hosts');
               
               if (!response.ok) {
                   throw new Error(`HTTP error! status: ${response.status}`);
@@ -1008,10 +1004,6 @@
                   option.textContent = host;
                   hostSelect.appendChild(option);
               });
-              
-              if (hosts.length > 0) {
-                  hostSelect.value = hosts[0];
-              }
               
           } catch (error) {
               console.error('Hiba a hosztok betöltésekor:', error);
@@ -1061,42 +1053,60 @@
         const form = document.getElementById("historicalDataForm");
 
         // A submit gombra általi grafikon lekérdezés #pipa pipa
-        form.addEventListener('submit', async function(e) {
-          e.preventDefault();
-          showLoader();
-          try {
-              resultDiv.innerHTML = "";
-              
-              const response = await fetch('/historical-data', {  
-                  method: 'POST',
-                  headers: {
-                      'Content-Type': 'application/x-www-form-urlencoded',
-                  },
-                  body: new URLSearchParams({
-                      hostid: document.getElementById('hostid').value,
-                      property: document.getElementById('property').value,
-                      start_datetime: document.getElementById('start_datetime').value + ':00Z',
-                      end_datetime: document.getElementById('end_datetime').value + ':00Z'
-                  })
-              });
-              
-              if (!response.ok) {
-                  const error = await response.text();
-                  throw new Error(error || `HTTP error! status: ${response.status}`);
-              }
-              
-              const data = await response.json();
-              console.log("Lekért adat:", data);
-              globalData = data;
-              graphDraw(data);
-              
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+            showLoader();
 
-          } catch (error) {
-              console.error('Hiba történt:', error);
-              resultDiv.innerHTML = `<p style="color: red;">Hiba történt: ${error.message}</p>`;
-          } finally {
-            hideLoader();
-          }
+            try {
+                resultDiv.innerHTML = "";
+
+                // A lekérdezés paraméterei
+                const hostid = document.getElementById('hostid').value;
+                const property = document.getElementById('property').value;
+                const start_datetime = document.getElementById('start_datetime').value + ':00Z';
+                const end_datetime = document.getElementById('end_datetime').value + ':00Z';
+
+                // Egyedi kulcs létrehozása a lekérdezés alapján
+                const queryKey = JSON.stringify({ hostid, property, start_datetime, end_datetime });
+
+                const cachedResults = JSON.parse(localStorage.getItem('queryResults')) || {};
+
+                if (cachedResults[queryKey]) {
+                    console.log("Adat a localStorage-ből:", cachedResults[queryKey]);
+                    globalData = cachedResults[queryKey];
+                    graphDraw(globalData);
+                    return;
+                }
+
+                // Ha nincs cache-elve, kérés küldése a szerver felé
+                const response = await fetch('/historical-data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ hostid, property, start_datetime, end_datetime })
+                });
+
+                if (!response.ok) {
+                    const error = await response.text();
+                    throw new Error(error || `HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log("Lekért adat:", data);
+                globalData = data;
+                graphDraw(data);
+
+                // Eredmény cache-elése localStorage-be
+                cachedResults[queryKey] = data;
+                localStorage.setItem('queryResults', JSON.stringify(cachedResults));
+
+            } catch (error) {
+                console.error('Hiba történt:', error);
+                resultDiv.innerHTML = `<p style="color: red;">Hiba történt: ${error.message}</p>`;
+            } finally {
+                hideLoader();
+            }
         });
 
       </script>

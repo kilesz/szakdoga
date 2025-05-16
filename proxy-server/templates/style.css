@@ -286,5 +286,26 @@ select{
 #map { 
     height: 800px; 
 }
+#wind-map-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    padding: 8px 12px;
+    background-color: #0078A8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#wind-map-btn:hover {
+    background-color: #005f8a;
+}
+
+#map-container {
+    position: relative;
+}
 
 

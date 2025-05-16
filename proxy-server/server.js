@@ -16,6 +16,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "templates")));
+const POSITIONS_FILE = path.join(__dirname, "templates","Positions.json");
+const HOSTS_FILE = path.join(__dirname, "templates", "hosts.json");
 
 const fetchData = async () => {
     try {
@@ -49,10 +51,10 @@ const fetchData = async () => {
     }
 };
 
-app.post("/positions", async (req, res) => {
+async function fetchPositions() {
     try {
         const targetUrl = "http://mazsola.iit.uni-miskolc.hu/~qgeroli5/fgsz/index.php";
-        console.log(`Fetching positions data from ${targetUrl}`);
+        console.log("Pozíciók lekérése szerverindításkor...");
 
         const response = await fetch(targetUrl, {
             method: "POST",
@@ -64,29 +66,31 @@ app.post("/positions", async (req, res) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP hiba: ${response.status}`);
         }
 
         const positions = await response.json();
-        
-        const jsonFilePath = path.join(__dirname, "templates", "Positions.json");
-        fs.writeFileSync(jsonFilePath, JSON.stringify(positions, null, 2));
-        console.log("Positions data successfully saved to Positions.json");
-        
-        res.json(positions);
-    } catch (error) {
-        console.error("Error fetching positions data:", error);
-        res.status(500).json({ 
-            error: "Failed to fetch positions data",
-            details: error.message 
-        });
-    }
-});
 
-app.post("/hosts", async (req, res) => {
+        const validPositions = {};
+        for (const [ip, data] of Object.entries(positions)) {
+            if (data.Latitude && data.Longitude) {
+                validPositions[ip] = data;
+            } else {
+                console.warn(`Érvénytelen pozíció ${ip}-re`);
+            }
+        }
+
+        fs.writeFileSync(POSITIONS_FILE, JSON.stringify(validPositions, null, 2));
+        console.log("Pozíciók mentve a fájlba.");
+    } catch (error) {
+        console.error("Hiba a pozíciók lekérésekor:", error);
+    }
+}
+
+async function fetchHosts() {
     try {
         const targetUrl = "http://mazsola.iit.uni-miskolc.hu/~qgeroli5/fgsz/index.php";
-        console.log(`Fetching hosts list from ${targetUrl}`);
+        console.log("Hosts lista lekérése szerverindításkor...");
 
         const response = await fetch(targetUrl, {
             method: "POST",
@@ -98,19 +102,17 @@ app.post("/hosts", async (req, res) => {
         });
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP hiba: ${response.status}`);
         }
 
         const hosts = await response.json();
-        res.json(hosts);
+
+        fs.writeFileSync(HOSTS_FILE, JSON.stringify(hosts, null, 2));
+        console.log("Hosts lista mentve a fájlba.");
     } catch (error) {
-        console.error("Error fetching hosts list:", error);
-        res.status(500).json({ 
-            error: "Failed to fetch hosts list",
-            details: error.message 
-        });
+        console.error("Hiba a hosts lista lekérésekor:", error);
     }
-});
+}
 
 app.post("/historical-data", async (req, res) => {
     try {
@@ -192,11 +194,42 @@ app.get("/data", (req, res) => {
         res.status(500).json({ error: "Error reading data file" });
     }
 });
+// Pozició végpont
+app.get("/positions", (req, res) => {
+    try {
+        if (!fs.existsSync(POSITIONS_FILE)) {
+            return res.status(404).json({ error: "Pozíciós fájl nem található." });
+        }
+
+        const data = fs.readFileSync(POSITIONS_FILE, "utf-8");
+        const json = JSON.parse(data);
+        res.json(json);
+    } catch (error) {
+        console.error("Hiba a fájl olvasásakor:", error);
+        res.status(500).json({ error: "Nem sikerült beolvasni a pozíciós adatokat." });
+    }
+});
+// Hosts végpont
+app.get("/hosts", (req, res) => {
+    try {
+        if (!fs.existsSync(HOSTS_FILE)) {
+            return res.status(404).json({ error: "Hosts fájl nem található." });
+        }
+
+        const data = fs.readFileSync(HOSTS_FILE, "utf-8");
+        const json = JSON.parse(data);
+        res.json(json);
+    } catch (error) {
+        console.error("Hiba a hosts fájl olvasásakor:", error);
+        res.status(500).json({ error: "Nem sikerült beolvasni a hosts adatokat." });
+    }
+});
 
 // Szerver indítás és adatlekérdezés
 const startServer = async () => {
-    //Ha nem akar elindulni a szerver, akkor csak kommenteld ki a következő sort:
-    //await fetchData();
+    //fetchData();
+    fetchPositions();
+    fetchHosts();
 
     app.listen(PORT, () => {
         console.log(`Server running: http://127.0.0.1:${PORT}`);
