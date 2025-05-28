@@ -71,16 +71,7 @@ async function fetchPositions() {
 
         const positions = await response.json();
 
-        const validPositions = {};
-        for (const [ip, data] of Object.entries(positions)) {
-            if (data.Latitude && data.Longitude) {
-                validPositions[ip] = data;
-            } else {
-                console.warn(`Érvénytelen pozíció ${ip}-re`);
-            }
-        }
-
-        fs.writeFileSync(POSITIONS_FILE, JSON.stringify(validPositions, null, 2));
+        fs.writeFileSync(POSITIONS_FILE, JSON.stringify(positions, null, 2));
         console.log("Pozíciók mentve a fájlba.");
     } catch (error) {
         console.error("Hiba a pozíciók lekérésekor:", error);

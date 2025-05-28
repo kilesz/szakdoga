@@ -201,7 +201,8 @@
             const response = await fetch('/positions');
             
             if (!response.ok) {
-                throw new Error(`HTTP hiba: ${response.status}`);
+                alert(`HTTP hiba: ${response.status}`);
+                return;
             }
 
             const positions = await response.json();
@@ -269,7 +270,8 @@
             const nodeEntry = freshdata.find(entry => entry[1] === ip);
             
             if (!nodeEntry || !nodeEntry[2]) {
-                throw new Error('No data available for selected IP');
+                alert('No data available for selected IP');
+                return;
             }
             
             const keys = [
@@ -374,7 +376,7 @@
           rows.unshift([ipKey, ipValue]);
         
           let csvContent = headers.join(',') + '\n';
-          csvContent += rows.map(row => row.join(':')).join('\n');
+          csvContent += rows.map(row => row.join(',')).join('\n');
         
           const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
           const url = URL.createObjectURL(blob);
@@ -458,13 +460,6 @@
           
           ctx.fillRect(0, yStart, canvas.width, fillHeight);
           
-          if (canvas.width > 25) {
-              ctx.fillStyle = 'white';
-              ctx.font = '8px Arial';
-              ctx.textAlign = 'center';
-              ctx.textBaseline = 'middle';
-              ctx.fillText(`${prefix}${voltage.toFixed(1)}V`, canvas.width/2, canvas.height/2);
-          }
         }
         //canvas tisztitása #pipa pipa
         function clearCanvas(canvas) {
@@ -597,7 +592,7 @@
         }
 
 
-
+        
         //Elmenteni a lekérdezést #pipa pipa
         function saveQuery(){
           const queryName = document.getElementById('queryname').value.trim();
@@ -620,7 +615,6 @@
 
           updateQueryDropdown();
           alert(`Query "${queryName}" saved successfully!`);
-
         }
         
         //Elmentet lekérdezések listázása #pipa pipa
@@ -733,7 +727,8 @@
             const alignedData = alignDataByTime(response1, response2);
             
             if (!alignedData || alignedData.data1.length < 2) {
-              throw new Error("Nincs elég közös adatpont a korrelációhoz!");
+              alert("Nincs elég közös adatpont a korrelációhoz!");
+              return;
             }
         
             const correlation = calculateCorrelation(alignedData.data1, alignedData.data2);
@@ -756,11 +751,12 @@
         async function fetchQueryData(queryName) {
           const savedQueries = JSON.parse(localStorage.getItem('savedQueries')) || {};
           const query = savedQueries[queryName];
-          
+
           if (!query) {
-            throw new Error(`Nem található a(z) ${queryName} lekérdezés!`);
+            alert(`Nem található a(z) "${queryName}" lekérdezés!`);
+            return;
           }
-        
+
           const response = await fetch('/historical-data', {
             method: 'POST',
             headers: {
@@ -773,12 +769,15 @@
               end_datetime: query.end_datetime
             })
           });
-        
+
           if (!response.ok) {
-            throw new Error(`Hálózati hiba: ${response.status}`);
+            alert(`Hálózati hiba: ${response.status}`);
+            return;
           }
-        
-          return await response.json();
+
+          const data = await response.json();
+
+          return data;
         }
 
         //korreláció idő alapú szelektálás
@@ -1060,13 +1059,11 @@
             try {
                 resultDiv.innerHTML = "";
 
-                // A lekérdezés paraméterei
                 const hostid = document.getElementById('hostid').value;
                 const property = document.getElementById('property').value;
                 const start_datetime = document.getElementById('start_datetime').value + ':00Z';
                 const end_datetime = document.getElementById('end_datetime').value + ':00Z';
 
-                // Egyedi kulcs létrehozása a lekérdezés alapján
                 const queryKey = JSON.stringify({ hostid, property, start_datetime, end_datetime });
 
                 const cachedResults = JSON.parse(localStorage.getItem('queryResults')) || {};
@@ -1078,7 +1075,6 @@
                     return;
                 }
 
-                // Ha nincs cache-elve, kérés küldése a szerver felé
                 const response = await fetch('/historical-data', {
                     method: 'POST',
                     headers: {
@@ -1097,7 +1093,6 @@
                 globalData = data;
                 graphDraw(data);
 
-                // Eredmény cache-elése localStorage-be
                 cachedResults[queryKey] = data;
                 localStorage.setItem('queryResults', JSON.stringify(cachedResults));
 
